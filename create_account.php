@@ -36,6 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Account created successfully
         
         echo "Account created successfully for " . $account_holder . ". Your account number is: " . $account_number;
+            // Store the account number in a session variable
+    $_SESSION['account_number_created'] = $account_number;
     
     } else {
         // Error handling for account creation
