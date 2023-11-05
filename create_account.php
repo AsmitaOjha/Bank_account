@@ -1,5 +1,5 @@
 <?php
-// Include database connection code here (use mysqli or PDO).
+// Include database connection code here
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -11,10 +11,33 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if the form is submitted
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Process form data, validate input, and insert account information into the database.
-    // Redirect to the main page or display a success message.
+    // Generate a unique account number (e.g., using a timestamp)
+    $account_number = "ACC-" . time();
+
+    // Get user input from the form
+    $account_holder = $_POST['account_holder'];
+    $address = $_POST['address'];
+    $phone_number = $_POST['phone_number'];
+    $balance = $_POST['balance'];
+
+    // Validate and sanitize user input (add more validation as needed)
+
+    // Insert data into the database
+    $sql = "INSERT INTO accounts (account_number, account_holder, address, phone_number, balance) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssssi", $account_number, $account_holder, $address, $phone_number, $balance);
+
+    if ($stmt->execute()) {
+        // Account created successfully
+        echo "Account created successfully!";
+    } else {
+        // Error handling for account creation
+        echo "Error creating account: " . $stmt->error;
+    }
+
+    $stmt->close();
 }
 ?>
 
@@ -26,44 +49,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <h1>Create Account</h1>
     <form method="post" action="">
-        <!-- Create account form here -->
         <label for="account_holder">Account Holder Name:</label>
         <input type="text" id="account_holder" name="account_holder" required>
 
-        <label for="account_number">Account Number:</label>
-        <input type="text" id="account_number" name "account_number" required>
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
 
-        <label for="initial_balance">Initial Balance:</label>
-        <input type="text" id="initial_balance" name="initial_balance" required>
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" id="phone_number" name="phone_number" required>
+
+        <label for="balance">Initial Balance:</label>
+        <input type="text" id="balance" name="balance" required>
 
         <button type="submit">Create Account</button>
     </form>
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Process the form data and insert account information into the database
-        $account_holder = $_POST['account_holder'];
-        $account_number = $_POST['account_number'];
-        $initial_balance = $_POST['initial_balance'];
-
-        // Validate and sanitize user input
-        // You should add more thorough validation and error handling
-
-        // Insert the data into the database
-        $sql = "INSERT INTO accounts (account_holder, account_number, balance) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssi", $account_holder, $account_number, $initial_balance);
-
-        if ($stmt->execute()) {
-            // Account created successfully
-            echo "Account created successfully!";
-        } else {
-            // Error handling for account creation
-            echo "Error creating account: " . $stmt->error;
-        }
-
-        $stmt->close();
-    }
-    ?>
-
 </body>
 </html>
