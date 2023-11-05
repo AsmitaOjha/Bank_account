@@ -14,7 +14,10 @@ if ($conn->connect_error) {
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate a unique account number (e.g., using a timestamp)
-    $account_number = "ACC-" . time();
+    // $account_number = "ACC-" . time();
+    // Generate a 10-digit random account number
+    $account_number = mt_rand(1000000000, 9999999999);
+
 
     // Get user input from the form
     $account_holder = $_POST['account_holder'];
@@ -31,7 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
         // Account created successfully
-        echo "Account created successfully!";
+        
+        echo "Account created successfully for " . $account_holder . ". Your account number is: " . $account_number;
+    
     } else {
         // Error handling for account creation
         echo "Error creating account: " . $stmt->error;
